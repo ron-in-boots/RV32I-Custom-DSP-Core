@@ -1,0 +1,127 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.1 (win64) Build 6140274 Thu May 22 00:12:29 MDT 2025
+| Date         : Sat Apr 11 17:26:25 2026
+| Host         : LAPTOP-9H0QSNOD running 64-bit major release  (build 9200)
+| Command      : report_control_sets -verbose -file cpu_control_sets_placed.rpt
+| Design       : cpu
+| Device       : xc7z010
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Control Set Information
+
+Table of Contents
+-----------------
+1. Summary
+2. Histogram
+3. Flip-Flop Distribution
+4. Detailed Control Set Information
+
+1. Summary
+----------
+
++----------------------------------------------------------+-------+
+|                          Status                          | Count |
++----------------------------------------------------------+-------+
+| Total control sets                                       |    49 |
+|    Minimum number of control sets                        |    49 |
+|    Addition due to synthesis replication                 |     0 |
+|    Addition due to physical synthesis replication        |     0 |
+| Unused register locations in slices containing registers |    32 |
++----------------------------------------------------------+-------+
+* Control sets can be merged at opt_design using control_set_merge or merge_equivalent_drivers
+** Run report_qor_suggestions for automated merging and remapping suggestions
+
+
+2. Histogram
+------------
+
++--------------------+-------+
+|       Fanout       | Count |
++--------------------+-------+
+| Total control sets |    49 |
+| >= 0 to < 4        |     0 |
+| >= 4 to < 6        |     0 |
+| >= 6 to < 8        |     2 |
+| >= 8 to < 10       |     0 |
+| >= 10 to < 12      |     1 |
+| >= 12 to < 14      |     0 |
+| >= 14 to < 16      |     1 |
+| >= 16              |    45 |
++--------------------+-------+
+* Control sets can be remapped at either synth_design or opt_design
+
+
+3. Flip-Flop Distribution
+-------------------------
+
++--------------+-----------------------+------------------------+-----------------+--------------+
+| Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
++--------------+-----------------------+------------------------+-----------------+--------------+
+| No           | No                    | No                     |             473 |          171 |
+| No           | No                    | Yes                    |               0 |            0 |
+| No           | Yes                   | No                     |             115 |           49 |
+| Yes          | No                    | No                     |              32 |           13 |
+| Yes          | No                    | Yes                    |               0 |            0 |
+| Yes          | Yes                   | No                     |            1308 |          549 |
++--------------+-----------------------+------------------------+-----------------+--------------+
+
+
+4. Detailed Control Set Information
+-----------------------------------
+
++-------------------+------------------------------------------+-----------------------------------------+------------------+----------------+--------------+
+|    Clock Signal   |               Enable Signal              |             Set/Reset Signal            | Slice Load Count | Bel Load Count | Bels / Slice |
++-------------------+------------------------------------------+-----------------------------------------+------------------+----------------+--------------+
+|  sysclk_IBUF_BUFG |                                          | imm_ex[10]_i_1_n_0                      |                2 |              6 |         3.00 |
+|  sysclk_IBUF_BUFG |                                          | instruction_decoder_cpu/instr_id_reg[1] |                2 |              7 |         3.50 |
+|  sysclk_IBUF_BUFG |                                          | imm_ex[30]_i_1_n_0                      |                4 |             10 |         2.50 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/csr_addr_ex_reg[1]_3[0] | rst_IBUF                                |                8 |             15 |         1.88 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/csr_addr_ex_reg[1]_3[0] | control_unit_cpu/SR[0]                  |                8 |             17 |         2.12 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/p_0_out[0]              | rst_IBUF                                |                8 |             28 |         3.50 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[10][31]_i_1_n_0     | rst_IBUF                                |               14 |             32 |         2.29 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[20][31]_i_1_n_0     | rst_IBUF                                |               12 |             32 |         2.67 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[22][31]_i_1_n_0     | rst_IBUF                                |               16 |             32 |         2.00 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[12][31]_i_1_n_0     | rst_IBUF                                |               12 |             32 |         2.67 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[14][31]_i_1_n_0     | rst_IBUF                                |               13 |             32 |         2.46 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[8][31]_i_1_n_0      | rst_IBUF                                |               21 |             32 |         1.52 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[25][31]_i_1_n_0     | rst_IBUF                                |               15 |             32 |         2.13 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[5][31]_i_1_n_0      | rst_IBUF                                |               14 |             32 |         2.29 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[6][31]_i_1_n_0      | rst_IBUF                                |               23 |             32 |         1.39 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[26][31]_i_1_n_0     | rst_IBUF                                |               17 |             32 |         1.88 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[9][31]_i_1_n_0      | rst_IBUF                                |               19 |             32 |         1.68 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[1][31]_i_1_n_0      | rst_IBUF                                |               12 |             32 |         2.67 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[16][31]_i_1_n_0     | rst_IBUF                                |               11 |             32 |         2.91 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[18][31]_i_1_n_0     | rst_IBUF                                |               10 |             32 |         3.20 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[29][31]_i_1_n_0     | rst_IBUF                                |               15 |             32 |         2.13 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[24][31]_i_1_n_0     | rst_IBUF                                |               13 |             32 |         2.46 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[2][31]_i_1_n_0      | rst_IBUF                                |               12 |             32 |         2.67 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[3][31]_i_1_n_0      | rst_IBUF                                |                9 |             32 |         3.56 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf                     | rst_IBUF                                |               19 |             32 |         1.68 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[11][31]_i_1_n_0     | rst_IBUF                                |               14 |             32 |         2.29 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[13][31]_i_1_n_0     | rst_IBUF                                |               15 |             32 |         2.13 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[17][31]_i_1_n_0     | rst_IBUF                                |                7 |             32 |         4.57 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[21][31]_i_1_n_0     | rst_IBUF                                |                7 |             32 |         4.57 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[27][31]_i_1_n_0     | rst_IBUF                                |               12 |             32 |         2.67 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[30][31]_i_1_n_0     | rst_IBUF                                |               20 |             32 |         1.60 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[15][31]_i_1_n_0     | rst_IBUF                                |               10 |             32 |         3.20 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[23][31]_i_1_n_0     | rst_IBUF                                |               16 |             32 |         2.00 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[28][31]_i_1_n_0     | rst_IBUF                                |               17 |             32 |         1.88 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[4][31]_i_1_n_0      | rst_IBUF                                |               15 |             32 |         2.13 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[19][31]_i_1_n_0     | rst_IBUF                                |               15 |             32 |         2.13 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/csr_addr_ex_reg[1]_0[0] | rst_IBUF                                |                8 |             32 |         4.00 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/csr_addr_ex_reg[1]_1[0] |                                         |               13 |             32 |         2.46 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/E[0]                    | rst_IBUF                                |                8 |             32 |         4.00 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/csr_addr_ex_reg[1]_2[0] | rst_IBUF                                |               11 |             32 |         2.91 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/csr_addr_ex_reg[2]_0[0] | rst_IBUF                                |                7 |             32 |         4.57 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/csr_addr_ex_reg[2]_1[0] | rst_IBUF                                |                9 |             32 |         3.56 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/ebreak_ex_reg_1[0]      | rst_IBUF                                |                9 |             32 |         3.56 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/ebreak_ex_reg_0[0]      | rst_IBUF                                |               16 |             32 |         2.00 |
+|  sysclk_IBUF_BUFG | control_unit_cpu/mret_ex_reg_0[0]        | rst_IBUF                                |               14 |             32 |         2.29 |
+|  sysclk_IBUF_BUFG | register_file_cpu/rf[7][31]_i_1_n_0      | rst_IBUF                                |               18 |             32 |         1.78 |
+| ~sysclk_IBUF_BUFG |                                          |                                         |               18 |             32 |         1.78 |
+|  sysclk_IBUF_BUFG |                                          | rst_IBUF                                |               41 |             92 |         2.24 |
+|  sysclk_IBUF_BUFG |                                          |                                         |              153 |            473 |         3.09 |
++-------------------+------------------------------------------+-----------------------------------------+------------------+----------------+--------------+
+
+

@@ -1,0 +1,28 @@
+# Vivado outputs
+*.log
+*.jou
+*.wdb
+*.wcfg
+*.pb
+*.str
+*.zip
+.Xil/
+
+# Build artifacts
+*.o
+*.elf
+*.bin
+*.mem
+!fir_baseline.mem
+!fir_custom.mem
+!test_mac.mem
+!test_sat.mem
+!mac_and_sat_test.mem
+!fir.elf
+!fir.bin
+!fir_custom.elf
+!fir_custom.bin
+
+# OS generated files
+.DS_Store
+Thumbs.db
