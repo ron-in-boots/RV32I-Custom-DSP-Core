@@ -1,6 +1,6 @@
 # RV32I Custom DSP Core for Signal Processing Workloads
 
-This repository documents the architectural redesign, implementation, and performance characteristics of a custom RV32I-based processor extended with Digital Signal Processing (DSP) acceleration hardware. The project explores the performance advantages of localized, application-specific ISA extensions against a standard RV32I baseline architecture, targeting signal processing kernels such as FIR (Finite Impulse Response) filters.
+This repository documents the architectural redesign, implementation, and performance characteristics of a custom RV32I-based processor extended with Digital Signal Processing (DSP) acceleration hardware. The project explores the performance advantages of localized, application-specific ISA extensions against a standard RV32I baseline architecture, targeting signal processing kernels such as FIR (Finite Impulse Response) filters. The baseline core was derived from the V-FRONT project on GitHub, and the ALU building blocks used in this work are based on `luftALU`.
 
 ## 1. Architectural & Hardware Differences
 
@@ -67,9 +67,9 @@ The empirical data extracted from Vivado waveform simulations. The time delta wa
 
 ### Overall Engineering Speedup
 Using the cycle counts, the overall execution speedup of the architecture is calculated as:
-$$ Speedup = \frac{\text{Baseline Cycles}}{\text{Custom Cycles}} = \frac{28}{6} = \mathbf{4.66x} $$
+$$ Speedup = \frac{\text{Baseline Cycles}}{\text{Custom Cycles}} = \frac{28}{6} \approx \mathbf{4.67x} $$
 
-The custom hardware executes the DSP workload **366% faster** than the baseline processor.
+The custom hardware executes the DSP workload in **21.4% of the baseline cycles**, which corresponds to a **4.67x speedup**.
 
 ## 5. Development Workflow: Compiling Assembly to `.mem`
 To translate RISC-V assembly test cases into Verilog `$readmemh` compatible `.mem` files, the standard `riscv-gnu-toolchain` was used under WSL (Windows Subsystem for Linux).
@@ -89,5 +89,10 @@ xxd -e -u -p -c 4 fir.bin > fir_custom.mem
 
 This output represents exactly the sequence of 32-bit little-endian instruction hex strings required to load into instruction ROM.
 
-## 6. Conclusion
-While the modified core incurs a slight area penalty due to the widened register file and dedicated DSP slices, the architectural trade-off is overwhelmingly positive for signal processing workloads. By eliminating the need for software-emulated multiplication, the custom `mac` instruction reduces the dynamic instruction count by 25% and drops the effective CPI from 7.0 to 2.0. This translates to an overall end-to-end execution speedup of **4.66x**, definitively proving that localized, application-specific ISA extensions are highly efficient for removing pipeline bottlenecks in computational kernels.
+## 6. References and Attribution
+The baseline processor used for comparison in this project comes from the V-FRONT repository on GitHub: https://github.com/kagandikmen/V-FRONT
+
+The ALU structure used in the custom core is based on the `luftALU` implementation included in this repository.
+
+## 7. Conclusion
+While the modified core incurs a slight area penalty due to the widened register file and dedicated DSP slices, the architectural trade-off is overwhelmingly positive for signal processing workloads. By eliminating the need for software-emulated multiplication, the custom `mac` instruction reduces the dynamic instruction count by 25% and drops the effective CPI from 7.0 to 2.0. This translates to an overall end-to-end execution speedup of **4.67x**, or execution in **21.4% of the baseline cycles**, definitively proving that localized, application-specific ISA extensions are highly efficient for removing pipeline bottlenecks in computational kernels.
