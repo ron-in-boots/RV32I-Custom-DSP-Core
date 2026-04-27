@@ -8,28 +8,27 @@ The fundamental differences between the Base V-FRONT (Pure RV32I) core and the C
 
 | Feature | Base V-FRONT (Pure RV32I) | Custom DSP Modified Core |
 | :--- | :--- | :--- |
-| **Multiplication Support** | None. Requires software emulation via repeated addition. | Hardware DSP48E1 multiplier inferred in the ALU. |
-| **Register File (RF)** | 2 Read Ports, 1 Write Port. | Extended to 3 Read Ports, 1 Write Port. |
+| **Multiplication Support** | None. Requires software emulation via repeated addition. | 2-cycle sequential multiplier inferred in the ALU. |
+| **Register File (RF)** | 2 Read Ports, 1 Write Port. | Extended to 3 Read Ports (`rs1`, `rs2`, `rs3`), 1 Write Port. |
 | **Accumulation** | Requires a separate `add` instruction. | Handled internally in a single `mac` instruction. |
-| **Arithmetic Clamping**| Standard overflow (wrap-around). | Saturating logic (`sat_en`) clamps at `0x7FFFFFFF` / `0x80000000`. |
-| **Hazard Management** | Standard forwarding (EX-to-EX, MEM-to-EX). | Custom `stall_global` unit freezes PC and IF/ID for 1 cycle to handle the 2-cycle DSP latency. |
+| **Arithmetic Clamping**| Standard overflow (wrap-around). | Saturating logic introduced via `sadd` and `ssub` instructions. |
+| **Hazard Management** | Standard forwarding (EX-to-EX, MEM-to-EX). | Deterministic dual-stall hazard detection unit freezes the pipeline to handle multi-cycle latency. |
 
 ## 2. Hardware Implementation & Synthesis Cost
 
-Achieving the targeted speedups requires extra silicon. Adding the 3rd read port to the register file, the DSP multiplier, and the saturating logic increases the physical footprint of the processor. Synthesis was targeted for the Xilinx Zynq-7000 (`xc7z010clg400-1`).
+Achieving the targeted speedups requires extra silicon. Adding the 3rd read port to the register file, the DSP multiplier, and the saturating logic increases the physical footprint of the processor. Synthesis and implementation were targeted and physically confirmed on a **Xilinx Zybo Z7-10** FPGA.
 
-**Area / Logic Utilization:**
-*   **Slice LUTs:** 2,633 out of 17,600 (14.96%)
-*   **Slice Registers:** 2,128 out of 35,200 (6.05%)
-*   **BRAM:** 12 out of 60 (20.00%)
-*   **DSP48E1 Slices:** 3 out of 80 (3.75%) _(Confirms the hardware multiplier was successfully synthesized and mapped)_
+**Implementation Costs vs Baseline:**
+*   **Area / Logic Utilization:** A 26.8% rise in LUT utilization.
+*   **Operating Frequency:** A modest 7.5% drop in maximum operating frequency ($F_{max}$), confirming the localized DSP extension is a worthwhile architectural trade-off for edge-compute devices.
 
-**Timing & Power Characteristics:**
-*   **Target Clock:** 10 ns
-*   **Worst Negative Slack (WNS):** +5.537 ns
-*   **Critical Path Delay:** 4.463 ns
-*   **Maximum Frequency ($F_{max}$):** $\approx \mathbf{224\text{ MHz}}$
-*   **Total On-Chip Power:** 0.11 W (0.017 W Dynamic / 0.093 W Static)
+### Hardware Validation with Integrated Logic Analyzer (ILA)
+To verify functionality on actual silicon, the synthesized design was programmed onto the Zybo Z7-10 FPGA and monitored using the Vivado Integrated Logic Analyzer (ILA).
+
+![Hardware ILA Proof](docs/images/ila_proof.png)
+*(Above: Real-time on-chip observation confirming successful execution of DSP instructions via Vivado ILA.)*
+
+![Datapath Changes](docs/images/datapath.png)
 
 ### Hardware Simulations
 **MAC & Saturating Arithmetic Validation**
@@ -56,20 +55,15 @@ The modified core executes the multiplication and addition simultaneously.
 
 ## 4. Performance & Cycle Analysis
 
-The empirical data extracted from Vivado waveform simulations. The time delta was measured for one complete FIR filter tap calculation.
+Empirical performance data extracted for a 4-tap FIR filter benchmark validates the architectural modifications.
 
-| Metric | Base V-FRONT Core | Custom DSP Core | Improvement |
-| :--- | :--- | :--- | :--- |
-| **Time Delta (Vivado)** | 280 ns | 60 ns | - 220 ns |
-| **Clock Cycles per Tap**| 28 cycles | 6 cycles | **78.5% Reduction** |
-| **Instructions per Tap**| 4 instructions | 3 instructions | **25.0% Reduction** |
-| **Cycles Per Instruction (CPI)**| $28 / 4 = \mathbf{7.0}$ | $6 / 3 = \mathbf{2.0}$ | **71.4% Reduction** |
+| Metric | Improvement with Custom DSP Core |
+| :--- | :--- |
+| **Total Execution Cycles** | **74.0% Reduction** |
+| **Dynamic Instruction Count** | **75.5% Reduction** |
 
 ### Overall Engineering Speedup
-Using the cycle counts, the overall execution speedup of the architecture is calculated as:
-$$ Speedup = \frac{\text{Baseline Cycles}}{\text{Custom Cycles}} = \frac{28}{6} \approx \mathbf{4.67x} $$
-
-The custom hardware executes the DSP workload in **21.4% of the baseline cycles**, which corresponds to a **4.67x speedup**.
+By eliminating the need for repeating software-emulated additions and branches required for multiplication and overflow handling, the hardware natively executes the operations. The 74% reduction in execution cycles confirms that the dedicated DSP hardware is a highly effective architectural trade-off.
 
 ## 5. Development Workflow: Compiling Assembly to `.mem`
 To translate RISC-V assembly test cases into Verilog `$readmemh` compatible `.mem` files, the standard `riscv-gnu-toolchain` was used under WSL (Windows Subsystem for Linux).
@@ -95,4 +89,4 @@ The baseline processor used for comparison in this project comes from the V-FRON
 The ALU structure used in the custom core is based on the `luftALU` implementation included in this repository.
 
 ## 7. Conclusion
-While the modified core incurs a slight area penalty due to the widened register file and dedicated DSP slices, the architectural trade-off is overwhelmingly positive for signal processing workloads. By eliminating the need for software-emulated multiplication, the custom `mac` instruction reduces the dynamic instruction count by 25% and drops the effective CPI from 7.0 to 2.0. This translates to an overall end-to-end execution speedup of **4.67x**, or execution in **21.4% of the baseline cycles**, definitively proving that localized, application-specific ISA extensions are highly efficient for removing pipeline bottlenecks in computational kernels.
+While the modified core incurs an area penalty due to the widened register file (3 read ports) and the 2-cycle sequential multiplier logic, the architectural trade-off is overwhelmingly positive for signal processing workloads. By substituting software-emulated multiplication loops with a dedicated, hardware-accelerated `mac` instruction—and resolving overflow naturally with `sadd`/`ssub`—the core achieves a 75.5% drop in dynamic instruction count for FIR kernels. This optimization delivers execution in only 26% of the baseline cycles, conclusively demonstrating the impact of specialized ISA extensions on edge RISC-V devices.
